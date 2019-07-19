@@ -44,13 +44,15 @@ def keyword_extractor(title, highlight):
         keywords[str("k"+str(i))] = k[0]
     return keywords
 
-@app.route('/info/',methods=['POST'])
+@app.route('/info/',methods=['POST', 'GET'])
 def get():
     if request.method == 'POST':
         data = request.get_json()
         # title, url, highlight, memo, other tags
         keywords = keyword_extractor(data["title"], data["highlight"])
         return json.dumps(keywords)
+    if request.method == 'GET':
+        return json.dumps(id)
     return "fail"
 
 if __name__=='__main__':

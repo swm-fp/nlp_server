@@ -4,22 +4,56 @@
 from flask import Flask
 from flask import request
 from flask import json
-from utils import *
+import operator, re
+from konlpy.tag import Kkma
+from textblob import TextBlob
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 id = {"hello":"world"}
 
+def keyword_extractor(title, highlight):
+    konl = Kkma()
+    eng_title = TextBlob(re.sub("[^A-Za-z]", ",", title.strip())).noun_phrases
+    eng_highlight = TextBlob(re.sub("[^A-Za-z]", " ", highlight.strip())).noun_phrases
+    title_nouns = konl.nouns(title)
+    highlight_nouns = konl.nouns(highlight)
+
+    #line = re.sub("[^A-Za-z]", "", title.strip())
+
+    keyword_list = {i: 2 for i in title_nouns}
+    for i in highlight_nouns:
+        try:
+            keyword_list[i] +=1
+        except:
+            keyword_list[i] = 1
+
+    for i in eng_title:
+        keyword_list[i] = 2
+
+    for i in eng_highlight:
+        try:
+            keyword_list[i] +=1
+        except:
+            keyword_list[i] = 1
+
+    keyword_list = sorted(keyword_list.items(), key=operator.itemgetter(1), reverse=True)[:3]
+    keywords={}
+    for i, k in enumerate(keyword_list):
+        keywords[str("k"+str(i))] = k[0]
+    return keywords
+
 @app.route('/info/',methods=['POST'])
 def get():
     if request.method == 'POST':
         data = request.get_json()
         # title, url, highlight, memo, other tags
-        keywordlist = get_keywordlist(data["title"], data["url"], data["highlight"], data["memo"], data["other_tags"])
-        return json.dumps(id)
+        keywords = keyword_extractor(data["title"], data["highlight"])
+        return json.dumps(keywords)
     return "fail"
 
 if __name__=='__main__':
-	print('connection succeeded')
 	app.run(host='127.0.0.1',port=5002,debug=True)
+    #keyword_extractor("생성적 적대 신경망(GANs)에 대한 초보자용 가이드 (GANs)", "GANs을 이해하려면 생성(generative) 알고리즘이 작동하는 방식을 알아야 한다.")
+

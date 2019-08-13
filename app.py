@@ -5,6 +5,7 @@
 from flask import Flask
 from flask import request
 from flask import json
+from flask import Response
 import operator, re
 from konlpy.tag import Kkma
 from textblob import TextBlob

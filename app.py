@@ -1,3 +1,4 @@
+
 #===========================
 # flask REST API code
 #===========================
@@ -51,7 +52,9 @@ def get():
         # title, url, highlight, memo, other tags
         keywords = keyword_extractor(data["title"], data["highlight"])
         keywords["data"] = data
-        return json.dumps(keywords)
+        
+        res = json.dumps(keywords, ensure_ascii=False).encode('utf8')
+        return Response(res, content_type='application/json; charset=utf-8')
     if request.method == 'GET':
         return json.dumps(id)
     return "fail"

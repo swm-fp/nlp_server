@@ -50,6 +50,7 @@ def get():
         data = request.get_json()
         # title, url, highlight, memo, other tags
         keywords = keyword_extractor(data["title"], data["highlight"])
+        keywords["data"] = data
         return json.dumps(keywords)
     if request.method == 'GET':
         return json.dumps(id)

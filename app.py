@@ -40,21 +40,24 @@ def keyword_extractor(title, highlight):
         except:
             keyword_list[i] = 1
 
-    keyword_list = sorted(keyword_list.items(), key=operator.itemgetter(1), reverse=True)[:3]
+    keyword_list = sorted(keyword_list.items(), key=operator.itemgetter(1), reverse=True)[:10]
+    '''
     keywords={}
     for i, k in enumerate(keyword_list):
         keywords[str("k"+str(i))] = k[0]
-    return keywords
+    '''
+    return keyword_list
 
 @app.route('/info/',methods=['POST', 'GET'])
 def get():
     if request.method == 'POST':
         data = request.get_json()
         # title, url, highlight, memo, other tags
-        keywords = keyword_extractor(data["title"], data["highlight"])
-        keywords["data"] = data
+        result = {}
+        result["keywords"] = keyword_extractor(data["title"], data["highlight"])
+        result["data"] = data
         
-        res = json.dumps(keywords, ensure_ascii=False).encode('utf8')
+        res = json.dumps(result, ensure_ascii=False).encode('utf8')
         return Response(res, content_type='application/json; charset=utf-8')
     if request.method == 'GET':
         return json.dumps(id)

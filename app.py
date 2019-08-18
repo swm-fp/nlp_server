@@ -51,10 +51,19 @@ def keyword_extractor(title, highlight):
 @app.route('/info/',methods=['POST', 'GET'])
 def get():
     if request.method == 'POST':
-        data = request.get_json()
-        # title, url, highlight, memo, other tags
+        req = request.get_json()
+        data = req[data]
+        /*
+        arrayList = 
+        {
+            title : ""
+            url : ""
+            memo : ["", "", ...]
+            highlight : ["", "", ...]
+        }
+        */
         result = {}
-        result["keywords"] = keyword_extractor(data["title"], data["highlight"])
+        result["keywords"] = keyword_extractor(data["title"])
         result["data"] = data
         
         res = json.dumps(result, ensure_ascii=False).encode('utf8')

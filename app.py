@@ -53,7 +53,7 @@ def get():
     if request.method == 'POST':
         req = request.get_json()
         data = req[data]
-        /*
+        '''
         arrayList = 
         {
             title : ""
@@ -61,9 +61,9 @@ def get():
             memo : ["", "", ...]
             highlight : ["", "", ...]
         }
-        */
+        '''
         result = {}
-        result["keywords"] = keyword_extractor(data["title"])
+        result["keywords"] = keyword_extractor(data["title"], "")
         result["data"] = data
         
         res = json.dumps(result, ensure_ascii=False).encode('utf8')

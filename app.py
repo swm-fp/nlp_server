@@ -51,8 +51,7 @@ def keyword_extractor(title, highlight):
 @app.route('/info/',methods=['POST', 'GET'])
 def get():
     if request.method == 'POST':
-        req = request.get_json()
-        data = req[data]
+        data = request.get_json()
         '''
         arrayList = 
         {

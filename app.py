@@ -13,10 +13,12 @@ from textblob import TextBlob
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+'''
 cors = CORS(app, resources={
     r"/api/*":{"origins": "*"},
     r"/info/*":{"origins":"*"},
     })
+'''
 id = {"hello":"world"}
 
 def keyword_extractor(title, highlight):
@@ -55,7 +57,7 @@ def keyword_extractor(title, highlight):
 @app.route('/info/',methods=['POST', 'GET'])
 def get():
     if request.method == 'POST':
-        data = request.get_json()
+        data = request.data
         '''
         arrayList = 
         {

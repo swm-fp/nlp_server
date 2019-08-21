@@ -3,6 +3,7 @@
 # flask REST API code
 #===========================
 from flask import Flask
+from flask_cors import CORS
 from flask import request
 from flask import json
 from flask import Response
@@ -12,7 +13,10 @@ from textblob import TextBlob
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-
+cors = CORS(app, resources={
+    r"/api/*":{"origins": "*"},
+    r"/info/*":{"origins":"*"},
+    })
 id = {"hello":"world"}
 
 def keyword_extractor(title, highlight):
@@ -41,11 +45,11 @@ def keyword_extractor(title, highlight):
             keyword_list[i] = 1
 
     keyword_list = sorted(keyword_list.items(), key=operator.itemgetter(1), reverse=True)[:10]
-    '''
+    
     keywords={}
     for i, k in enumerate(keyword_list):
         keywords[str("k"+str(i))] = k[0]
-    '''
+
     return keyword_list
 
 @app.route('/info/',methods=['POST', 'GET'])

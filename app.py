@@ -3,7 +3,7 @@
 # flask REST API code
 #===========================
 from flask import Flask
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask import request
 from flask import json
 from flask import Response
@@ -12,13 +12,8 @@ from konlpy.tag import Kkma
 from textblob import TextBlob
 
 app = Flask(__name__)
-app.config.from_object(__name__)
-'''
-cors = CORS(app, resources={
-    r"/api/*":{"origins": "*"},
-    r"/info/*":{"origins":"*"},
-    })
-'''
+cors = CORS(app)
+
 id = {"hello":"world"}
 
 def keyword_extractor(title, highlight):
@@ -46,18 +41,21 @@ def keyword_extractor(title, highlight):
         except:
             keyword_list[i] = 1
 
-    keyword_list = sorted(keyword_list.items(), key=operator.itemgetter(1), reverse=True)[:10]
+    keyword_list = sorted(keyword_list.items(), key=operator.itemgetter(1), reverse=True)
     
     keywords={}
     for i, k in enumerate(keyword_list):
-        keywords[str("k"+str(i))] = k[0]
+        if not k[0].isdigit():
+            keywords[str("k"+str(i))] = k[0]
 
-    return keyword_list
+    return keyword_list, konl.pos(title)
 
 @app.route('/info/',methods=['POST', 'GET'])
 def get():
+    print("start")
     if request.method == 'POST':
-        data = request.data
+        print("post")
+        data = request.get_json(force=True)
         '''
         arrayList = 
         {
@@ -68,10 +66,10 @@ def get():
         }
         '''
         result = {}
-        result["keywords"] = keyword_extractor(data["title"], "")
-        result["data"] = data
+        result["keywords"], result["result"] = keyword_extractor(data["title"], "")
         
         res = json.dumps(result, ensure_ascii=False).encode('utf8')
+        print(result["result"])
         return Response(res, content_type='application/json; charset=utf-8')
     if request.method == 'GET':
         return json.dumps(id)
@@ -79,5 +77,5 @@ def get():
 
 if __name__=='__main__':
 	app.run(host='0.0.0.0',port=5002,debug=True)
-    #keyword_extractor("생성적 적대 신경망(GANs)에 대한 초보자용 가이드 (GANs)", "GANs을 이해하려면 생성(generative) 알고리즘이 작동하는 방식을 알아야 한다.")
+        # keyword_extractor("생성적 적대 신경망(GANs)에 대한 초보자용 가이드 (GANs)", "GANs을 이해하려면 생성(generative) 알고리즘이 작동하는 방식을 알아야 한다.")
 

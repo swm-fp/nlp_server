@@ -10,6 +10,7 @@ from flask import Response
 import operator, re
 from konlpy.tag import Kkma
 from textblob import TextBlob
+import csv
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -52,9 +53,7 @@ def keyword_extractor(title, highlight):
 
 @app.route('/info/',methods=['POST', 'GET'])
 def get():
-    print("start")
     if request.method == 'POST':
-        print("post")
         data = request.get_json(force=True)
         '''
         arrayList = 
@@ -66,10 +65,20 @@ def get():
         }
         '''
         result = {}
+        result["title"] = data["title"]
+        result["url"] = data["url"]
         result["keywords"], result["result"] = keyword_extractor(data["title"], "")
-        
+
         res = json.dumps(result, ensure_ascii=False).encode('utf8')
-        print(result["result"])
+
+        with open('./data.csv', 'a', encoding='utf-8') as csvfile:
+            fieldnames = ['title', 'url', 'keywords', 'result']
+            wr = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            
+            #wr.writeheader()
+            wr.writerow(result)
+
+
         return Response(res, content_type='application/json; charset=utf-8')
     if request.method == 'GET':
         return json.dumps(id)

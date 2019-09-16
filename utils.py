@@ -2,6 +2,15 @@ import operator, re
 from konlpy.tag import Kkma, Twitter
 from textblob import TextBlob
 
+def compare_api(api_name, sen):
+    module = None
+    if api_name=='kkma':
+        module = Kkma()
+    elif api_name=='Twitter':
+        module = Twitter()
+
+    return module.pos(sen)
+
 def posResult(sen): #단어 단위로 형태소 분석 후 반환
     kkma = Kkma()
 
